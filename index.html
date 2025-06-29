@@ -585,12 +585,12 @@
                 // Test databázového připojení
                 const connected = await db.testConnection();
                 if (!connected) {
-                    showError('Chyba připojení k databázi. Obnovte stránku.');
+                    showError('Aplikace se připojuje k databázi...');
                 }
                 
             } catch (error) {
                 console.error('Chyba při inicializaci:', error);
-                showError('Chyba při načítání aplikace.');
+                showError('Moment, aplikace se načítá...');
             }
         }
 
