@@ -1,11 +1,11 @@
 // Konfigurace aplikace
 const CONFIG = {
-  // Supabase konfigurace (změň po vytvoření projektu)
-  SUPABASE_URL: 'https://zjmzvuobafpvirhlrpvb.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqbXp2dW9iYWZwdmlyaGxycHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyMDYwNTEsImV4cCI6MjA2Njc4MjA1MX0.Zp6EroBrtIHMaJj130PRIwrn-qXgwbfumH1kyqOzozc',
+  // Supabase konfigurace - nastavte vaše vlastní hodnoty
+  SUPABASE_URL: process.env.SUPABASE_URL || 'your-supabase-url-here',
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'your-supabase-anon-key-here',
   
   // Admin konfigurace
-  ADMIN_PASSWORD: 'probab68!!?',
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'your-admin-password-here',
   
   // Aplikace nastavení
   APP_TITLE: 'Tenhle dotazník "pravděpodobně" vyplníte. Nebo ne?',
