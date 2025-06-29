@@ -524,6 +524,7 @@
         // Dashboard initialization
         async function initDashboard() {
             try {
+                loadCustomQuestions(); // Načtení uložených otázek
                 await loadStatistics();
                 await loadAllData();
                 await createCharts();
@@ -532,6 +533,19 @@
             } catch (error) {
                 console.error('Dashboard init error:', error);
                 showError('Chyba při načítání dashboard.');
+            }
+        }
+        
+        // Načtení uložených otázek z localStorage
+        function loadCustomQuestions() {
+            try {
+                const savedQuestions = localStorage.getItem('custom_questions');
+                if (savedQuestions) {
+                    CONFIG.QUESTIONS = JSON.parse(savedQuestions);
+                    console.log('Načteny uložené otázky:', CONFIG.QUESTIONS.length);
+                }
+            } catch (error) {
+                console.error('Chyba při načítání uložených otázek:', error);
             }
         }
 
@@ -873,14 +887,53 @@
         }
 
         function saveQuestions() {
-            // In a real app, this would save to database/config
-            alert('Otázky uloženy! (v reálné aplikaci by se uložily do konfigurace)');
+            try {
+                // Uložení do localStorage pro persistenci mezi relacemi
+                localStorage.setItem('custom_questions', JSON.stringify(CONFIG.QUESTIONS));
+                
+                // Zobrazení potvrzení
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.textContent = 'Otázky byly úspěšně uloženy!';
+                successDiv.style.position = 'fixed';
+                successDiv.style.top = '20px';
+                successDiv.style.right = '20px';
+                successDiv.style.zIndex = '1000';
+                document.body.appendChild(successDiv);
+                
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                }, 3000);
+                
+            } catch (error) {
+                alert('Chyba při ukládání otázek: ' + error.message);
+            }
         }
 
         function resetQuestions() {
             if (confirm('Opravdu chcete resetovat všechny otázky na původní?')) {
-                // Reset to original questions
-                location.reload();
+                try {
+                    // Smazání uložených otázek z localStorage
+                    localStorage.removeItem('custom_questions');
+                    
+                    // Zobrazení potvrzení
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'success';
+                    successDiv.textContent = 'Otázky byly resetovány na původní! Obnovuji stránku...';
+                    successDiv.style.position = 'fixed';
+                    successDiv.style.top = '20px';
+                    successDiv.style.right = '20px';
+                    successDiv.style.zIndex = '1000';
+                    document.body.appendChild(successDiv);
+                    
+                    // Reload stránky po 2 sekundách
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    
+                } catch (error) {
+                    alert('Chyba při resetování otázek: ' + error.message);
+                }
             }
         }
 

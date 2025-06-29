@@ -538,11 +538,27 @@
         let demographics = {};
         let questions = [];
 
+        // Načtení uložených otázek z localStorage
+        function loadCustomQuestions() {
+            try {
+                const savedQuestions = localStorage.getItem('custom_questions');
+                if (savedQuestions) {
+                    CONFIG.QUESTIONS = JSON.parse(savedQuestions);
+                    console.log('Načteny upravené otázky z administrace:', CONFIG.QUESTIONS.length);
+                }
+            } catch (error) {
+                console.error('Chyba při načítání uložených otázek:', error);
+            }
+        }
+
         // Inicializace aplikace
         async function init() {
             try {
                 // Načtení konfigurace
                 document.getElementById('app-title').textContent = CONFIG.APP_TITLE;
+                
+                // Načtení uložených otázek z localStorage (pokud existují)
+                loadCustomQuestions();
                 
                 questions = [...CONFIG.QUESTIONS];
                 document.getElementById('question-count').textContent = questions.length;
