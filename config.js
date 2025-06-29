@@ -1,12 +1,12 @@
 // Konfigurace aplikace
 const CONFIG = {
-  // Supabase konfigurace - POZOR: Pro produkci nastavte environment variables!
-  // Pro lokální vývoj dočasně vyplňte hodnoty zde, ale NIKDY je necommitujte!
-  SUPABASE_URL: 'your-supabase-url-here',
-  SUPABASE_ANON_KEY: 'your-supabase-anon-key-here',
+  // Supabase konfigurace - POZOR: Nastavte environment variables v Netlify!
+  // Tyto hodnoty musíte vyplnit ručně po nasazení
+  SUPABASE_URL: 'https://zjmzvuobafpvirhlrpvb.supabase.co',
+  SUPABASE_ANON_KEY: 'PLEASE_SET_YOUR_NEW_ANON_KEY_HERE',
   
   // Admin konfigurace
-  ADMIN_PASSWORD: 'your-admin-password-here',
+  ADMIN_PASSWORD: 'PLEASE_SET_YOUR_ADMIN_PASSWORD_HERE',
   
   // Aplikace nastavení
   APP_TITLE: 'Tenhle dotazník "pravděpodobně" vyplníte. Nebo ne?',
