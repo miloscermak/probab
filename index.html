@@ -178,6 +178,14 @@
             margin-bottom: 20px;
         }
 
+        .question-main {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-align: center;
+        }
+
         .question-text {
             font-size: 1.4em;
             font-weight: 600;
@@ -475,6 +483,7 @@
                 
                 <div class="question-container">
                     <div class="question-header">
+                        <div class="question-main" id="question-main"></div>
                         <div class="question-text" id="question-text"></div>
                         <div class="question-context" id="question-context"></div>
                     </div>
@@ -649,6 +658,7 @@
             const progress = ((currentQuestion + 1) / questions.length) * 100;
             
             document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('question-main').textContent = question.question || 'Otázka';
             document.getElementById('question-text').textContent = `"${question.text}"`;
             document.getElementById('question-context').textContent = `Kontext: ${question.context}`;
             document.getElementById('progress-fill').style.width = progress + '%';

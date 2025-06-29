@@ -17,51 +17,61 @@ const CONFIG = {
   QUESTIONS: [
     {
       id: 'pravdepodobne',
+      question: 'Jaké bude počasí na víkend?',
       text: 'Pravděpodobně to bude dobré.',
       context: 'Počasí na víkend'
     },
     {
       id: 'mozna',
+      question: 'Přijdeš na párty?',
       text: 'Možná přijdu.',
       context: 'Na párty'
     },
     {
       id: 'urcite',
+      question: 'Zvládneme tento projekt?',
       text: 'Určitě to zvládneme.',
       context: 'Projekt v práci'
     },
     {
       id: 'asi',
+      question: 'Bude zítra pršet?',
       text: 'Asi bude pršet.',
       context: 'Zítřejší počasí'
     },
     {
       id: 'zrejme',
+      question: 'Stihneš schůzku včas?',
       text: 'Zřejmě se opozdím.',
       context: 'Schůzka'
     },
     {
       id: 'nepravdepodobne',
+      question: 'Vyhrajeme v loterii?',
       text: 'Nepravděpodobně se to stane.',
       context: 'Výhra v loterii'
     },
     {
       id: 'skoro-jiste',
+      question: 'Projdeme zkouškou?',
       text: 'Skoro jistě uspějeme.',
       context: 'Zkouška'
     },
     {
       id: 'pochybuji',
+      question: 'Stihneme termín projektu?',
       text: 'Pochybuji, že to stihneme.',
       context: 'Termín projektu'
     },
     {
       id: 'snad',
+      question: 'Bude nová aplikace fungovat?',
       text: 'Snad to bude fungovat.',
       context: 'Nová aplikace'
     },
     {
       id: 'velmi-pravdepodobne',
+      question: 'Přijde host na večeři?',
       text: 'Velmi pravděpodobně přijde.',
       context: 'Host na večeři'
     }

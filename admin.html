@@ -858,7 +858,8 @@
                 editor.innerHTML = `
                     <h4>Otázka ${index + 1}</h4>
                     <input type="text" value="${question.id}" placeholder="ID otázky" onchange="updateQuestion(${index}, 'id', this.value)">
-                    <input type="text" value="${question.text}" placeholder="Text otázky" onchange="updateQuestion(${index}, 'text', this.value)">
+                    <input type="text" value="${question.question || ''}" placeholder="Otázka (např. 'Pojedeš v sobotu na výlet?')" onchange="updateQuestion(${index}, 'question', this.value)">
+                    <input type="text" value="${question.text}" placeholder="Text odpovědi (např. 'Pravděpodobně ano')" onchange="updateQuestion(${index}, 'text', this.value)">
                     <textarea placeholder="Kontext otázky" onchange="updateQuestion(${index}, 'context', this.value)">${question.context}</textarea>
                     <button class="btn danger" onclick="removeQuestion(${index})">🗑️ Smazat</button>
                 `;
@@ -873,7 +874,8 @@
         function addQuestion() {
             CONFIG.QUESTIONS.push({
                 id: 'nova-otazka-' + Date.now(),
-                text: 'Nová otázka',
+                question: 'Nová otázka?',
+                text: 'Nová odpověď',
                 context: 'Kontext'
             });
             generateQuestionEditor();
