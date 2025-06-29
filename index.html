@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Výzkum českých pravděpodobnostních frází. Jak rozumíte větám o pravděpodobnosti?">
+    <meta name="keywords" content="výzkum, čeština, pravděpodobnost, dotazník">
+    <title>Pravděpodobnostní fráze v češtině</title>
+    
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Chart.js pro grafy -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --gray-dark: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--gray);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--gray-dark);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .stats-bar {
+            background: var(--gray-light);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stats-item {
+            display: inline-block;
+            margin: 0 15px;
+            font-size: 0.9em;
+            color: var(--gray-dark);
+        }
+
+        .stats-number {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--gray), #4b5563);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .question-container {
+            margin-bottom: 40px;
+        }
+
+        .question-header {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray-dark);
+        }
+
+        .question-context {
+            color: var(--gray);
+            font-style: italic;
+            font-size: 1em;
+        }
+
+        .slider-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 15px;
+        }
+
+        .progress-container {
+            margin-bottom: 25px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-skip {
+            flex: 1;
+            background: var(--gray);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-next {
+            flex: 2;
+        }
+
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .result-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-phrase {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--gray-dark);
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.9em;
+        }
+
+        .result-stat {
+            text-align: center;
+        }
+
+        .result-stat-label {
+            color: var(--gray);
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-stat-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            height: 300px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9em;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 1.1em;
+            }
+            
+            .stats-item {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .result-stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Landing Page -->
+            <div id="landing" class="page">
+                <div class="logo">📊</div>
+                <h1 id="app-title">Pravděpodobnostní fráze v češtině</h1>
+                <p class="description" id="app-description">V běžné řeči často říkáme „určitě", „asi" nebo „snad ano". Ale co to vlastně znamená? Kolik procent pravděpodobnosti si pod tím představujeme? Je „nejspíš ano" 65, nebo 90 procent? Vyplňte 10 krátkých otázek a porovnejte svůj odhad s tím, jak to vidí ostatní.</p>
+                
+                <div class="stats-bar">
+                    <div class="stats-item">
+                        📊 <span class="stats-number" id="question-count">10</span> otázek
+                    </div>
+                    <div class="stats-item">
+                        🔒 Anonymní
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startSurvey()">
+                    🚀 Začít dotazník
+                </button>
+                
+                <div class="footer">
+                    Výzkum trvá 2-3 minuty • Data jsou uložena anonymně
+                </div>
+            </div>
+
+            <!-- Demographics -->
+            <div id="demographics" class="page hidden">
+                <h2>Základní údaje</h2>
+                <p style="color: var(--gray); margin-bottom: 25px;">
+                    Tyto informace nám pomohou lépe analyzovat odpovědi. Vše je anonymní.
+                </p>
+                
+                <div class="form-group">
+                    <label for="age">Věk *</label>
+                    <select id="age" required>
+                        <option value="">Vyberte věkovou kategorii</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">Pohlaví *</label>
+                    <select id="gender" required>
+                        <option value="">Vyberte pohlaví</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email (volitelný)</label>
+                    <input type="email" id="email" placeholder="pro zaslání výsledků">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-skip" onclick="goToLanding()">‹ Zpět</button>
+                    <button class="btn btn-next" onclick="startQuestions()">Pokračovat ›</button>
+                </div>
+            </div>
+
+            <!-- Questions -->
+            <div id="questions" class="page hidden">
+                <div class="progress-container">
+                    <div class="progress-text">
+                        Otázka <span id="current-q">1</span> z <span id="total-q">10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question-header">
+                        <div class="question-text" id="question-text"></div>
+                        <div class="question-context" id="question-context"></div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="probability-slider">Jaká je podle vás pravděpodobnost?</label>
+                        <input type="range" min="0" max="100" value="50" class="slider" id="probability-slider">
+                        <div class="slider-value" id="slider-value">50%</div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-skip" onclick="skipQuestion()">Přeskočit</button>
+                    <button class="btn btn-next" onclick="nextQuestion()" id="next-btn">Další ›</button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="page hidden">
+                <h2>🎉 Děkujeme za vyplnění!</h2>
+                <p style="color: var(--gray); margin-bottom: 25px;">
+                    Zde jsou vaše výsledky v porovnání s ostatními respondenty.
+                </p>
+                
+                <div id="loading-results" class="loading">
+                    Načítáme výsledky...
+                </div>
+                
+                <div id="results-content" class="hidden">
+                    <div class="chart-container">
+                        <canvas id="results-chart"></canvas>
+                    </div>
+                    
+                    <div id="results-list"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-skip" onclick="restartSurvey()">🔄 Vyplnit znovu</button>
+                    <button class="btn btn-success" onclick="shareSurvey()">📢 Sdílet</button>
+                </div>
+                
+                <div class="footer">
+                    Děkujeme za účast ve výzkumu! 🙏
+                </div>
+            </div>
+
+            <!-- Error States -->
+            <div id="error-message" class="error hidden"></div>
+            <div id="success-message" class="success hidden"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="database.js"></script>
+    <script>
+        // Globální proměnné
+        let currentPage = 'landing';
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let demographics = {};
+        let questions = [];
+
+        // Inicializace aplikace
+        async function init() {
+            try {
+                // Načtení konfigurace
+                document.getElementById('app-title').textContent = CONFIG.APP_TITLE;
+                
+                questions = [...CONFIG.QUESTIONS];
+                document.getElementById('question-count').textContent = questions.length;
+                document.getElementById('total-q').textContent = questions.length;
+                
+                // Naplnění demografických možností
+                populateDemographics();
+                
+                // Promíchání otázek
+                shuffleArray(questions);
+                
+                // Načtení počtu odpovědí
+                await loadResponseCount();
+                
+                // Test databázového připojení
+                const connected = await db.testConnection();
+                if (!connected) {
+                    showError('Chyba připojení k databázi. Obnovte stránku.');
+                }
+                
+            } catch (error) {
+                console.error('Chyba při inicializaci:', error);
+                showError('Chyba při načítání aplikace.');
+            }
+        }
+
+        // Demografické formuláře
+        function populateDemographics() {
+            const ageSelect = document.getElementById('age');
+            const genderSelect = document.getElementById('gender');
+            
+            CONFIG.DEMOGRAPHICS.age.forEach(option => {
+                const optEl = document.createElement('option');
+                optEl.value = option.value;
+                optEl.textContent = option.label;
+                ageSelect.appendChild(optEl);
+            });
+            
+            CONFIG.DEMOGRAPHICS.gender.forEach(option => {
+                const optEl = document.createElement('option');
+                optEl.value = option.value;
+                optEl.textContent = option.label;
+                genderSelect.appendChild(optEl);
+            });
+        }
+
+        // Navigace mezi stránkami
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            currentPage = pageId;
+        }
+
+        function startSurvey() {
+            showPage('demographics');
+        }
+
+        function goToLanding() {
+            showPage('landing');
+        }
+
+        function startQuestions() {
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            
+            if (!age || !gender) {
+                showError('Prosím vyplňte všechny povinné údaje.');
+                return;
+            }
+            
+            demographics = {
+                age: age,
+                gender: gender,
+                email: document.getElementById('email').value
+            };
+            
+            currentQuestion = 0;
+            userAnswers = [];
+            showPage('questions');
+            displayQuestion();
+        }
+
+        // Zobrazení otázky
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('question-text').textContent = `"${question.text}"`;
+            document.getElementById('question-context').textContent = `Kontext: ${question.context}`;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            
+            // Reset slider
+            const slider = document.getElementById('probability-slider');
+            slider.value = 50;
+            document.getElementById('slider-value').textContent = '50%';
+            
+            // Update button text
+            const isLast = currentQuestion === questions.length - 1;
+            document.getElementById('next-btn').textContent = isLast ? 'Dokončit ✓' : 'Další ›';
+        }
+
+        // Slider handling
+        document.getElementById('probability-slider').addEventListener('input', function() {
+            document.getElementById('slider-value').textContent = this.value + '%';
+        });
+
+        function skipQuestion() {
+            saveAnswer(null);
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            const value = parseInt(document.getElementById('probability-slider').value);
+            saveAnswer(value);
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                submitSurvey();
+            }
+        }
+
+        function saveAnswer(probability) {
+            const question = questions[currentQuestion];
+            userAnswers.push({
+                question_id: question.id,
+                probability: probability
+            });
+        }
+
+        // Odeslání dotazníku
+        async function submitSurvey() {
+            try {
+                showPage('results');
+                
+                const result = await db.saveResponse(demographics, userAnswers);
+                
+                if (result.success) {
+                    await displayResults();
+                } else {
+                    showError('Chyba při ukládání odpovědí: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Chyba při odesílání:', error);
+                showError('Chyba při odesílání dotazníku.');
+            }
+        }
+
+        // Zobrazení výsledků
+        async function displayResults() {
+            try {
+                const stats = await db.getStats();
+                
+                document.getElementById('loading-results').classList.add('hidden');
+                document.getElementById('results-content').classList.remove('hidden');
+                
+                // Vytvoření grafu
+                createResultsChart(stats);
+                
+                // Vytvoření seznamu výsledků
+                createResultsList(stats);
+                
+            } catch (error) {
+                console.error('Chyba při zobrazování výsledků:', error);
+                showError('Chyba při načítání výsledků.');
+            }
+        }
+
+        // Graf výsledků
+        function createResultsChart(stats) {
+            const canvas = document.getElementById('results-chart');
+            const ctx = canvas.getContext('2d');
+            
+            const answeredQuestions = userAnswers.filter(a => a.probability !== null);
+            
+            const data = {
+                labels: answeredQuestions.map(answer => {
+                    const question = questions.find(q => q.id === answer.question_id);
+                    return question.text.length > 25 ? question.text.substring(0, 25) + '...' : question.text;
+                }),
+                datasets: [{
+                    label: 'Váš odhad',
+                    data: answeredQuestions.map(answer => answer.probability),
+                    backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'Medián ostatních',
+                    data: answeredQuestions.map(answer => {
+                        const stat = stats[answer.question_id];
+                        return stat ? stat.median : 0;
+                    }),
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 2
+                }]
+            };
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Porovnání vašich odhadů s ostatními'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Pravděpodobnost (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Seznam výsledků
+        function createResultsList(stats) {
+            const container = document.getElementById('results-list');
+            container.innerHTML = '';
+            
+            const answeredQuestions = userAnswers.filter(a => a.probability !== null);
+            
+            answeredQuestions.forEach(answer => {
+                const question = questions.find(q => q.id === answer.question_id);
+                const stat = stats[answer.question_id] || { median: 0, count: 0 };
+                const difference = Math.abs(answer.probability - stat.median);
+                
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                
+                let diffColor = '#10b981'; // green
+                if (difference > 25) diffColor = '#ef4444'; // red
+                else if (difference > 10) diffColor = '#f59e0b'; // yellow
+                
+                item.innerHTML = `
+                    <div class="result-phrase">"${question.text}"</div>
+                    <div class="result-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-label">Váš odhad</div>
+                            <div class="result-stat-value" style="color: var(--primary)">${answer.probability}%</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-label">Medián ostatních</div>
+                            <div class="result-stat-value" style="color: var(--secondary)">${stat.median}%</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-label">Rozdíl</div>
+                            <div class="result-stat-value" style="color: ${diffColor}">${difference} bodů</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        // Utility funkce
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        async function loadResponseCount() {
+            try {
+                const count = await db.getResponseCount();
+                document.getElementById('response-count').textContent = count.toLocaleString('cs');
+            } catch (error) {
+                document.getElementById('response-count').textContent = '...';
+            }
+        }
+
+        function restartSurvey() {
+            currentQuestion = 0;
+            userAnswers = [];
+            demographics = {};
+            shuffleArray(questions);
+            showPage('landing');
+            loadResponseCount();
+        }
+
+        function shareSurvey() {
+            const url = window.location.href;
+            const text = 'Zkuste si také tento zajímavý dotazník o českých pravděpodobnostních frázích!';
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: CONFIG.APP_TITLE,
+                    text: text,
+                    url: url
+                });
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+                    showSuccess('Odkaz zkopírován do schránky!');
+                });
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            setTimeout(() => {
+                errorEl.classList.add('hidden');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.classList.remove('hidden');
+            setTimeout(() => {
+                successEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Spuštění aplikace
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
