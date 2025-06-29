@@ -3,10 +3,10 @@ const CONFIG = {
   // Supabase konfigurace - POZOR: Nastavte environment variables v Netlify!
   // Tyto hodnoty musíte vyplnit ručně po nasazení
   SUPABASE_URL: 'https://zjmzvuobafpvirhlrpvb.supabase.co',
-  SUPABASE_ANON_KEY: 'PLEASE_SET_YOUR_NEW_ANON_KEY_HERE',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqbXp2dW9iYWZwdmlyaGxycHZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyMDYwNTEsImV4cCI6MjA2Njc4MjA1MX0.Zp6EroBrtIHMaJj130PRIwrn-qXgwbfumH1kyqOzozc',
   
   // Admin konfigurace
-  ADMIN_PASSWORD: 'PLEASE_SET_YOUR_ADMIN_PASSWORD_HERE',
+  ADMIN_PASSWORD: 'probab68!!?',
   
   // Aplikace nastavení
   APP_TITLE: 'Tenhle dotazník "pravděpodobně" vyplníte. Nebo ne?',
