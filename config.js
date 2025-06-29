@@ -1,11 +1,12 @@
 // Konfigurace aplikace
 const CONFIG = {
-  // Supabase konfigurace - nastavte vaše vlastní hodnoty
-  SUPABASE_URL: process.env.SUPABASE_URL || 'your-supabase-url-here',
-  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'your-supabase-anon-key-here',
+  // Supabase konfigurace - POZOR: Pro produkci nastavte environment variables!
+  // Pro lokální vývoj dočasně vyplňte hodnoty zde, ale NIKDY je necommitujte!
+  SUPABASE_URL: 'your-supabase-url-here',
+  SUPABASE_ANON_KEY: 'your-supabase-anon-key-here',
   
   // Admin konfigurace
-  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'your-admin-password-here',
+  ADMIN_PASSWORD: 'your-admin-password-here',
   
   // Aplikace nastavení
   APP_TITLE: 'Tenhle dotazník "pravděpodobně" vyplníte. Nebo ne?',

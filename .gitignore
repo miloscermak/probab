@@ -2,12 +2,15 @@
 node_modules/
 npm-debug.log*
 
-# Environment variables - NIKDY necheckovatt do Gitu!
+# Environment variables - NIKDY necheckovat do Gitu!
 .env
 .env.local
 .env.development.local
 .env.production.local
 .env.test
+
+# Lokální konfigurační soubory s citlivými údaji
+config.local.js
 
 # OS generated files
 .DS_Store
