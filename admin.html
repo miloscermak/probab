@@ -211,11 +211,29 @@
             color: var(--gray-dark);
         }
 
-        select, input {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+
+        select, input, textarea {
             padding: 8px 12px;
             border: 1px solid #d1d5db;
             border-radius: 6px;
             font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            font-family: inherit;
         }
 
         .loading {
@@ -438,6 +456,29 @@
                 </div>
             </div>
 
+            <!-- Homepage Editor -->
+            <div class="card">
+                <h2>🏠 Editor titulní stránky</h2>
+                <p style="color: var(--gray); margin-bottom: 20px;">
+                    Upravte texty na úvodní stránce aplikace pro váš vlastní dotazník.
+                </p>
+                
+                <div class="form-group">
+                    <label for="app-title-edit">Titulek aplikace:</label>
+                    <input type="text" id="app-title-edit" placeholder="Titulek vašeho dotazníku">
+                </div>
+                
+                <div class="form-group">
+                    <label for="app-description-edit">Popis aplikace:</label>
+                    <textarea id="app-description-edit" rows="4" placeholder="Popis toho, co váš dotazník zkoumá"></textarea>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn warning" onclick="saveHomepage()">💾 Uložit titulní stránku</button>
+                    <button class="btn secondary" onclick="resetHomepage()">🔄 Resetovat</button>
+                </div>
+            </div>
+
             <!-- Question Editor -->
             <div class="card">
                 <h2>✏️ Editor otázek</h2>
@@ -525,6 +566,7 @@
         async function initDashboard() {
             try {
                 loadCustomQuestions(); // Načtení uložených otázek
+                loadHomepageSettings(); // Načtení nastavení homepage
                 await loadStatistics();
                 await loadAllData();
                 await createCharts();
@@ -935,6 +977,87 @@
                     
                 } catch (error) {
                     alert('Chyba při resetování otázek: ' + error.message);
+                }
+            }
+        }
+
+        // Homepage editor functions
+        function loadHomepageSettings() {
+            try {
+                const savedHomepage = localStorage.getItem('custom_homepage');
+                if (savedHomepage) {
+                    const homepage = JSON.parse(savedHomepage);
+                    CONFIG.APP_TITLE = homepage.title || CONFIG.APP_TITLE;
+                    CONFIG.APP_DESCRIPTION = homepage.description || CONFIG.APP_DESCRIPTION;
+                }
+                
+                // Načtení do formuláře
+                document.getElementById('app-title-edit').value = CONFIG.APP_TITLE;
+                document.getElementById('app-description-edit').value = CONFIG.APP_DESCRIPTION;
+                
+            } catch (error) {
+                console.error('Chyba při načítání homepage nastavení:', error);
+            }
+        }
+
+        function saveHomepage() {
+            try {
+                const title = document.getElementById('app-title-edit').value;
+                const description = document.getElementById('app-description-edit').value;
+                
+                // Aktualizace CONFIG
+                CONFIG.APP_TITLE = title;
+                CONFIG.APP_DESCRIPTION = description;
+                
+                // Uložení do localStorage
+                const homepage = {
+                    title: title,
+                    description: description
+                };
+                localStorage.setItem('custom_homepage', JSON.stringify(homepage));
+                
+                // Zobrazení potvrzení
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.textContent = 'Titulní stránka byla úspěšně uložena!';
+                successDiv.style.position = 'fixed';
+                successDiv.style.top = '20px';
+                successDiv.style.right = '20px';
+                successDiv.style.zIndex = '1000';
+                document.body.appendChild(successDiv);
+                
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                }, 3000);
+                
+            } catch (error) {
+                alert('Chyba při ukládání titulní stránky: ' + error.message);
+            }
+        }
+
+        function resetHomepage() {
+            if (confirm('Opravdu chcete resetovat titulní stránku na původní?')) {
+                try {
+                    // Smazání uložených nastavení z localStorage
+                    localStorage.removeItem('custom_homepage');
+                    
+                    // Zobrazení potvrzení
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'success';
+                    successDiv.textContent = 'Titulní stránka byla resetována! Obnovuji stránku...';
+                    successDiv.style.position = 'fixed';
+                    successDiv.style.top = '20px';
+                    successDiv.style.right = '20px';
+                    successDiv.style.zIndex = '1000';
+                    document.body.appendChild(successDiv);
+                    
+                    // Reload stránky po 2 sekundách
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    
+                } catch (error) {
+                    alert('Chyba při resetování titulní stránky: ' + error.message);
                 }
             }
         }

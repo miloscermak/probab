@@ -560,14 +560,31 @@
             }
         }
 
+        // Načtení uložených homepage nastavení z localStorage
+        function loadCustomHomepage() {
+            try {
+                const savedHomepage = localStorage.getItem('custom_homepage');
+                if (savedHomepage) {
+                    const homepage = JSON.parse(savedHomepage);
+                    CONFIG.APP_TITLE = homepage.title || CONFIG.APP_TITLE;
+                    CONFIG.APP_DESCRIPTION = homepage.description || CONFIG.APP_DESCRIPTION;
+                    console.log('Načtena upravená titulní stránka z administrace');
+                }
+            } catch (error) {
+                console.error('Chyba při načítání homepage nastavení:', error);
+            }
+        }
+
         // Inicializace aplikace
         async function init() {
             try {
-                // Načtení konfigurace
-                document.getElementById('app-title').textContent = CONFIG.APP_TITLE;
+                // Načtení uložených nastavení z localStorage
+                loadCustomHomepage(); // Načtení homepage nastavení
+                loadCustomQuestions(); // Načtení otázek
                 
-                // Načtení uložených otázek z localStorage (pokud existují)
-                loadCustomQuestions();
+                // Načtení konfigurace do HTML
+                document.getElementById('app-title').textContent = CONFIG.APP_TITLE;
+                document.getElementById('app-description').textContent = CONFIG.APP_DESCRIPTION;
                 
                 questions = [...CONFIG.QUESTIONS];
                 document.getElementById('question-count').textContent = questions.length;
